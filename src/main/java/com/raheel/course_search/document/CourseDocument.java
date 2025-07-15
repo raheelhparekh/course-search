@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(indexName = "courses")
 @Data
@@ -30,4 +30,7 @@ public class CourseDocument {
 
     @Field(type = FieldType.Date)
     private Instant nextSessionDate;
+
+    private String suggest;
+
 }

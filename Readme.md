@@ -1,6 +1,6 @@
 # 📚 Course Search – Spring Boot + Elasticsearch
 
-A full-text course search engine using Spring Boot and Elasticsearch. Supports keyword search, filters, sorting, and pagination over a dataset of 50+ sample course documents.
+A full-text course search engine using Spring Boot and Elasticsearch. Supports keyword search, filters, sorting, pagination, and autocomplete over a dataset of 50+ sample course documents.
 
 ---
 
@@ -9,17 +9,18 @@ A full-text course search engine using Spring Boot and Elasticsearch. Supports k
 * 🔎 Full-text search on `title` and `description`
 * 🎯 Filter by:
 
-    * Category
-    * Type
-    * Age range (`minAge`, `maxAge`)
-    * Price range
-    * Start date (`nextSessionDate`)
+  * Category
+  * Type
+  * Age range (`minAge`, `maxAge`)
+  * Price range
+  * Start date (`nextSessionDate`)
 * 📊 Sort by:
 
-    * Upcoming date (default)
-    * Price ascending (`priceAsc`)
-    * Price descending (`priceDesc`)
+  * Upcoming date (default)
+  * Price ascending (`priceAsc`)
+  * Price descending (`priceDesc`)
 * 📄 Pagination support (`page`, `size`)
+* ✨ Autocomplete suggestions for course titles
 
 ---
 
@@ -68,6 +69,7 @@ This will:
 
 * Load sample data from `sample-courses.json`
 * Index it into the `courses` index
+* Add a `suggest` field for autocomplete
 * Start the app at: `http://localhost:8080`
 
 ---
@@ -148,6 +150,30 @@ curl "http://localhost:8080/api/search?page=1&size=5"
 
 ---
 
+## ✨ Autocomplete API
+
+### Endpoint: `GET /api/suggest`
+
+### Query Parameter:
+
+| Param    | Type   | Description                      |
+| -------- | ------ | -------------------------------- |
+| `prefix` | string | Partial title to get suggestions |
+
+#### Sample Request:
+
+```bash
+curl "http://localhost:8080/api/suggest?prefix=math"
+```
+
+#### Response:
+
+```json
+["Math Explorers", "Math Mania"]
+```
+
+---
+
 ## 📁 Sample Data
 
 * Stored in: `src/main/resources/sample-courses.json`
@@ -161,9 +187,6 @@ curl "http://localhost:8080/api/search?page=1&size=5"
 * Make sure Elasticsearch is running **before** starting the Spring Boot app
 * Dates must be in **ISO 8601** format (e.g., `2025-07-22T00:00:00Z`)
 * Course document mapping uses `Instant` for `nextSessionDate`
+* `suggest` field must be mapped as a `completion` field for autocomplete
 
 ---
-
-## 👨‍💻 Author
-
-Made with ❤️ by Raheel Parekh

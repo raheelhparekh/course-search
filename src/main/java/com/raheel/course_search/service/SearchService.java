@@ -71,10 +71,10 @@ public class SearchService {
 
         // Start date filter
         if (request.getStartDate() != null) {
-            long timestampMillis = request.getStartDate().toEpochMilli(); // ✅ convert Instant to long
+            long timestampMillis = request.getStartDate().toEpochMilli(); //  convert Instant to long
             filters.add(RangeQuery.of(r -> r
                     .field("nextSessionDate")
-                    .gte(JsonData.of(timestampMillis)) // ✅ send number
+                    .gte(JsonData.of(timestampMillis)) //  send number
             )._toQuery());
         }
 
@@ -115,5 +115,29 @@ public class SearchService {
         long total = response.hits().total() != null ? response.hits().total().value() : 0;
 
         return new CourseSearchResponse(total, courses);
+    }
+
+    //  Autocomplete Suggest Logic
+    public List<String> suggestTitles(String prefix) throws Exception {
+        var response = client.search(s -> s
+                        .index("courses")
+                        .suggest(sg -> sg
+                                .suggesters("title-suggest", s1 -> s1
+                                        .prefix(prefix)
+                                        .completion(c -> c
+                                                .field("suggest")
+                                                .fuzzy(f -> f.fuzziness("AUTO"))
+                                        )
+                                )
+                        ),
+                CourseDocument.class
+        );
+
+        return response.suggest()
+                .get("title-suggest")
+                .stream()
+                .flatMap(entry -> entry.completion().options().stream())
+                .map(opt -> opt.text())
+                .toList();
     }
 }

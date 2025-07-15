@@ -28,6 +28,11 @@ public class DataLoader {
             // Convert JSON to List<CourseDocument>
             List<CourseDocument> courses = mapper.readValue(is, new TypeReference<List<CourseDocument>>() {});
 
+            //  Populate suggest field
+            for (CourseDocument course : courses) {
+                course.setSuggest(course.getTitle());
+            }
+
             // Save to Elasticsearch
             courseRepository.saveAll(courses);
 
